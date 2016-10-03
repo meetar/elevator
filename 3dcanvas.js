@@ -92,7 +92,7 @@ function threestart() {
     
     // GEOMETRY
     var c = document.getElementById("container");
-    geometry = new THREE.PlaneGeometry(256, 256, 512, 512);
+    geometry = new THREE.PlaneGeometry(256, 256, 256, 256);
     // geometry = new THREE.PlaneGeometry(c.clientWidth, c.clientWidth, c.clientHeight, c.clientHeight);
     geometry.computeTangents();
     mesh = new THREE.Mesh( geometry, material);
