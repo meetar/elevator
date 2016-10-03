@@ -39,7 +39,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            z-index: 2999;
+            z-index: 1;
             background-color: #000;
             opacity: 1;
             content: ' ';
@@ -62,7 +62,7 @@
             position: absolute;
             top: 0px;
             /*left: 25%;*/
-            z-index: 10001;
+            z-index: 2;
             pointer-events: none;
         }
 
@@ -92,6 +92,15 @@
 
     <!-- Demo module -->
     <script src="main.js"></script>
+
+    <!-- Mapzen map UI -->
+    <script src='//mapzen.com/common/ui/mapzen-ui.min.js'></script>
+    <script>
+      MPZN.bug({
+        locate: false,
+        bug: false
+      });
+    </script>
 
   </body>
 </html>
