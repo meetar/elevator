@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tangram Heightmapper</title>
+    <title>Tangram Elevator</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.css" />
     <script type="text/javascript" src="lib/three.js"></script>
@@ -21,7 +21,11 @@
             margin: 0px;
             border: 0px;
             padding: 0px;
+            font-family: sans-serif;
+            font-size: .8em;
+            color: white;
         }
+        a { color: #666; }
 
         #map {
             background: rgba(0, 0, 0, 0);
@@ -61,7 +65,6 @@
             width: 100%;
             position: absolute;
             top: 0px;
-            /*left: 25%;*/
             z-index: 2;
             pointer-events: none;
         }
@@ -96,10 +99,14 @@
     <!-- Mapzen map UI -->
     <script src='//mapzen.com/common/ui/mapzen-ui.min.js'></script>
     <script>
-      MPZN.bug({
-        locate: false,
-        bug: false
-      });
+        MPZN.bug({
+            locate: false,
+            bug: false,
+            name: 'Tangram Elevator',
+            link: 'https://mapzen.com/projects/tangram',
+            tweet: '@TangramJS: real-time WebGL maps from @mapzen',
+            repo: 'https://github.com/meetar/elevator'
+        });
     </script>
 
   </body>

@@ -60,8 +60,6 @@ map = (function () {
                     done = false;
                 }
             }
-            // draw a fake 3D view of the main canvas into the threecanvas
-            threeify();
         }
     });
     
@@ -206,10 +204,6 @@ map = (function () {
         return {max: maxadj, min: minadj}
     }
 
-    function threeify() {
-
-    }
-
     window.layer = layer;
     var scene = layer.scene;
     window.scene = scene;
@@ -264,6 +258,7 @@ map = (function () {
             gui.u_min = global_min;
             scene.styles.hillshade.shaders.uniforms.u_min = global_min;
             expose();
+            scene.requestRedraw();
         });
         // gui.map_lines = false;
         // gui.add(gui, 'map_lines').name("map lines").onChange(function(value) {
@@ -300,14 +295,14 @@ window.stop = stop;
 window.go = go;
 
     // disable sliders when autoexpose is on
-    // function sliderState(active) {
-    //     var pointerEvents = active ? "auto" : "none";
-    //     var opacity = active ? 1. : .5;
-    //     gui.__controllers[0].domElement.parentElement.style.pointerEvents = pointerEvents;
-    //     gui.__controllers[0].domElement.parentElement.style.opacity = opacity;
-    //     gui.__controllers[1].domElement.parentElement.style.pointerEvents = pointerEvents;
-    //     gui.__controllers[1].domElement.parentElement.style.opacity = opacity;
-    // }
+    function sliderState(active) {
+        var pointerEvents = active ? "auto" : "none";
+        var opacity = active ? 1. : .5;
+        gui.__controllers[0].domElement.parentElement.style.pointerEvents = pointerEvents;
+        gui.__controllers[0].domElement.parentElement.style.opacity = opacity;
+        gui.__controllers[1].domElement.parentElement.style.pointerEvents = pointerEvents;
+        gui.__controllers[1].domElement.parentElement.style.opacity = opacity;
+    }
     //
     // // show and hide help screen
     // function toggleHelp(active) {
@@ -338,6 +333,7 @@ window.go = go;
             var display = map._controlContainer.style.display;
             map._controlContainer.style.display = (display === "none") ? "block" : "none";
             document.getElementsByClassName('dg')[1].style.display = (display === "none") ? "block" : "none";
+            // document.getElementsByClassName('dg')[1].style.opacity = (display === "none") ? "1" : "0";
         // // listen for 'esc'
         // } else if (e.which == 27) {
         //     toggleHelp(false);
@@ -359,7 +355,7 @@ window.go = go;
             });
             scene_loaded = true;
 
-            // sliderState(false);
+            sliderState(false);
             tempCanvas = document.createElement("canvas");
             tempCanvas.id = "tempCanvas";
             document.body.appendChild(tempCanvas);
@@ -387,6 +383,8 @@ window.go = go;
 
             map._controlContainer.style.display = "none";
             document.getElementsByClassName('dg')[1].style.display = "none";
+            // document.getElementsByClassName('dg')[1].style.opacity = 0;
+            dat.GUI.toggleHide();
 
 
         });
