@@ -45,7 +45,7 @@ map = (function () {
         scene: 'scene.yaml',
         attribution: 'Map by <a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="https://github.com/tangram/heightmapper" target="_blank">Fork This</a>',
         postUpdate: function() {
-            if (gui.autoexpose && !stopped) {
+            if (!stopped) {
                 // three stages:
                 // 1) start analysis
                 if (!analysing && !done) { 
@@ -88,7 +88,7 @@ map = (function () {
 
     function expose() {
         analysing = true;
-        if (typeof gui != 'undefined' && gui.autoexpose == false) return false;
+        if (typeof gui != 'undefined') return false;
         if (scene_loaded) {
             start_analysis();
         } else {
@@ -182,7 +182,7 @@ map = (function () {
         minadj = Math.max(minadj, -11000);
         maxadj = Math.min(maxadj, 8900);
         // only let the minimum value go below 0 if ocean data is included
-        // minadj = gui.include_oceans ? minadj : Math.max(minadj, 0);
+        minadj = gui.include_oceans ? minadj : Math.max(minadj, 0);
 
         // keep min and max separated
         if (minadj === maxadj) maxadj += 10;
@@ -237,34 +237,34 @@ map = (function () {
         });
         // gui.scaleFactor = 1 +'';
         // gui.add(gui, 'scaleFactor').name("z:x scale factor");
-        gui.autoexpose = true;
-        gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
-            sliderState(!value);
-            if (value) {
-                // store slider values
-                uminValue = gui.u_min;
-                umaxValue = gui.u_max;
-                // force widening value to trigger redraw
-                lastumax = 0;
-                expose();
-            } else if (typeof uminValue != 'undefined') {
-                // retrieve slider values
-                scene.styles.hillshade.shaders.uniforms.u_min = uminValue;
-                scene.styles.hillshade.shaders.uniforms.u_max = umaxValue;
-                scene.requestRedraw();
-                gui.u_min = uminValue;
-                gui.u_max = umaxValue;
-                updateGUI();
-            }
-        });
-        // gui.include_oceans = false;
-        // gui.add(gui, 'include_oceans').name("include ocean data").onChange(function(value) {
-        //     if (value) global_min = -11000;
-        //     else global_min = 0;
-        //     gui.u_min = global_min;
-        //     scene.styles.hillshade.shaders.uniforms.u_min = global_min;
-        //     expose();
+        // gui.autoexpose = true;
+        // gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
+        //     sliderState(!value);
+        //     if (value) {
+        //         // store slider values
+        //         uminValue = gui.u_min;
+        //         umaxValue = gui.u_max;
+        //         // force widening value to trigger redraw
+        //         lastumax = 0;
+        //         expose();
+        //     } else if (typeof uminValue != 'undefined') {
+        //         // retrieve slider values
+        //         scene.styles.hillshade.shaders.uniforms.u_min = uminValue;
+        //         scene.styles.hillshade.shaders.uniforms.u_max = umaxValue;
+        //         scene.requestRedraw();
+        //         gui.u_min = uminValue;
+        //         gui.u_max = umaxValue;
+        //         updateGUI();
+        //     }
         // });
+        gui.include_oceans = false;
+        gui.add(gui, 'include_oceans').name("include ocean data").onChange(function(value) {
+            if (value) global_min = -11000;
+            else global_min = 0;
+            gui.u_min = global_min;
+            scene.styles.hillshade.shaders.uniforms.u_min = global_min;
+            expose();
+        });
         // gui.map_lines = false;
         // gui.add(gui, 'map_lines').name("map lines").onChange(function(value) {
         //     toggleLines(value);
@@ -300,35 +300,35 @@ window.stop = stop;
 window.go = go;
 
     // disable sliders when autoexpose is on
-    function sliderState(active) {
-        var pointerEvents = active ? "auto" : "none";
-        var opacity = active ? 1. : .5;
-        gui.__controllers[0].domElement.parentElement.style.pointerEvents = pointerEvents;
-        gui.__controllers[0].domElement.parentElement.style.opacity = opacity;
-        gui.__controllers[1].domElement.parentElement.style.pointerEvents = pointerEvents;
-        gui.__controllers[1].domElement.parentElement.style.opacity = opacity;
-    }
-
-    // show and hide help screen
-    function toggleHelp(active) {
-        var visibility = active ? "visible" : "hidden";
-        document.getElementById('help').style.visibility = visibility;
-        // help-blocker prevents map interaction while help is visible
-        document.getElementById('help-blocker').style.visibility = visibility;
-    }
-
-    // draw boundary and water lines
-    function toggleLines(active) {
-        // scene.config.layers.water.visible = active;
-        scene.styles.togglelines.shaders.uniforms.u_alpha = active ? 1. : 0.;
-        scene.requestRedraw();
-    }
-    // draw labels
-    function toggleLabels(active) {
-        // scene.config.layers.water.visible = active;
-        scene.styles.toggletext.shaders.uniforms.u_alpha = active ? 1. : 0.;
-        scene.requestRedraw();
-    }
+    // function sliderState(active) {
+    //     var pointerEvents = active ? "auto" : "none";
+    //     var opacity = active ? 1. : .5;
+    //     gui.__controllers[0].domElement.parentElement.style.pointerEvents = pointerEvents;
+    //     gui.__controllers[0].domElement.parentElement.style.opacity = opacity;
+    //     gui.__controllers[1].domElement.parentElement.style.pointerEvents = pointerEvents;
+    //     gui.__controllers[1].domElement.parentElement.style.opacity = opacity;
+    // }
+    //
+    // // show and hide help screen
+    // function toggleHelp(active) {
+    //     var visibility = active ? "visible" : "hidden";
+    //     document.getElementById('help').style.visibility = visibility;
+    //     // help-blocker prevents map interaction while help is visible
+    //     document.getElementById('help-blocker').style.visibility = visibility;
+    // }
+    //
+    // // draw boundary and water lines
+    // function toggleLines(active) {
+    //     // scene.config.layers.water.visible = active;
+    //     scene.styles.togglelines.shaders.uniforms.u_alpha = active ? 1. : 0.;
+    //     scene.requestRedraw();
+    // }
+    // // draw labels
+    // function toggleLabels(active) {
+    //     // scene.config.layers.water.visible = active;
+    //     scene.styles.toggletext.shaders.uniforms.u_alpha = active ? 1. : 0.;
+    //     scene.requestRedraw();
+    // }
 
     document.onkeydown = function (e) {
         e = e || window.event;
@@ -337,10 +337,10 @@ window.go = go;
             // toggle UI
             var display = map._controlContainer.style.display;
             map._controlContainer.style.display = (display === "none") ? "block" : "none";
-            document.getElementsByClassName('dg')[0].style.display = (display === "none") ? "block" : "none";
-        // listen for 'esc'
-        } else if (e.which == 27) {
-            toggleHelp(false);
+            document.getElementsByClassName('dg')[1].style.display = (display === "none") ? "block" : "none";
+        // // listen for 'esc'
+        // } else if (e.which == 27) {
+        //     toggleHelp(false);
         }
     };
 
@@ -359,7 +359,7 @@ window.go = go;
             });
             scene_loaded = true;
 
-            sliderState(false);
+            // sliderState(false);
             tempCanvas = document.createElement("canvas");
             tempCanvas.id = "tempCanvas";
             document.body.appendChild(tempCanvas);
@@ -381,6 +381,13 @@ window.go = go;
             threestart();
             var scaleVal = 25.0;
             uniforms[ "uDisplacementScale" ].value = scaleVal;
+
+            document.body.insertBefore(map._controlContainer, document.body.childNodes[0]);
+            map._controlContainer.style.zindex = 100;
+
+            map._controlContainer.style.display = "none";
+            document.getElementsByClassName('dg')[1].style.display = "none";
+
 
         });
         layer.addTo(map);
