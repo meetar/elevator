@@ -5,10 +5,11 @@ var camera, scene, renderer, container;
 var light, pointLight, geometry, mesh;
 var uniforms, material;
 var heightmap, diffTexture, dispTexture;
+var georez = 256;
 
 function threestart() {
 
-    container = document.getElementById( 'container' );
+    container = document.getElementById( 'threecontainer' );
     canvas = document.getElementById("tempCanvas");
 
     // --- WebGl render
@@ -32,10 +33,11 @@ function threestart() {
     var height = renderer.domElement.height;
     var aspect = width / height; // view aspect ratio
     camera = new THREE.PerspectiveCamera( fov, aspect );
-    camera.position.z = -400;
-    camera.position.y = -600;
+    camera.position.z = -500;
+    camera.position.y = -300;
     camera.lookAt(scene.position);
     camera.updateMatrix();
+
 
     controls = new THREE.TrackballControls( camera, renderer.domElement );
     controls.rotateSpeed = 3.0;
@@ -47,7 +49,7 @@ function threestart() {
     controls.dynamicDampingFactor = 0.3;
     controls.addEventListener( 'change', render );
 
-    
+
     // --- Lights
             
     // pointLight = new THREE.PointLight( 0xffffff, 1.0 );
@@ -61,7 +63,7 @@ function threestart() {
     ambientLight.position.set(0, 100, -200);
 
 
-    
+
     // MATERIAL
 
     dispTexture = new THREE.Texture(canvas);
@@ -92,22 +94,47 @@ function threestart() {
     
     // GEOMETRY
     var c = document.getElementById("container");
-    geometry = new THREE.PlaneGeometry(256, 256, 256, 256);
-    // geometry = new THREE.PlaneGeometry(c.clientWidth, c.clientWidth, c.clientHeight, c.clientHeight);
+    var aspect = window.innerHeight / window.innerWidth;
+    if (window.innerHeight < window.innerWidth) {
+        geometry = new THREE.PlaneGeometry(georez, Math.round(georez*aspect), georez, Math.round(georez*aspect));
+    } else {
+        geometry = new THREE.PlaneGeometry(Math.round(georez*aspect), georez, Math.round(georez*aspect), georez);
+    }
     geometry.computeTangents();
     mesh = new THREE.Mesh( geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
-
-    
-    setInterval("update()", 30);
- 
+    adjustFOV();
     update();
+}
+
+function resizeGeometry() {
+    var aspect = window.innerHeight / window.innerWidth;
+    if (window.innerHeight < window.innerWidth) {
+        geometry.width = georez;
+        geometry.height = georez*aspect;
+    } else {
+        geometry.height = georez;
+        geometry.width = georez*aspect;
+    }
+    adjustFOV();
+}
+
+function adjustFOV() {
+    var dist = 583;
+    var aspect = window.innerHeight / window.innerWidth;
+    var width = geometry.width;
+    var fov;
+    if (aspect < 1 ) fov = 2 * Math.atan( ( width / aspect ) / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
+    else fov = 2 * Math.atan( height / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
+    camera.fov = fov / Math.log(window.innerWidth) * 3;
+    console.log('fov', fov, 'width:', window.innerWidth, 'dpr:', Tangram.debug.Utils.device_pixel_ratio, 'cam.fov:', camera.fov)
+    camera.updateProjectionMatrix();
+    render();
 }
 
 function update() {
     dispTexture.needsUpdate = true;
-
     render();
     controls.update(); // trackball interaction
 }

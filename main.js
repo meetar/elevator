@@ -1,6 +1,5 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
-
 map = (function () {
     'use strict';
 
@@ -60,6 +59,8 @@ map = (function () {
                     done = false;
                 }
             }
+            // update three.js display
+            update();
         }
     });
     
@@ -121,8 +122,9 @@ map = (function () {
         var ctx = tempCanvas.getContext("2d"); // Get canvas 2d context
         ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-        // redraw canvas smaller in testing canvas, for speed
-        ctx.drawImage(scene.canvas,0,0,scene.canvas.width/tempFactor,scene.canvas.height/tempFactor);
+        // copy main scene canvas into the tempCanvas with the 2d context
+        ctx.drawImage(scene.canvas,0,0,scene.canvas.width,scene.canvas.height);
+
         // get all the pixels
         var pixels = ctx.getImageData(0,0, tempCanvas.width, tempCanvas.height);
 
@@ -306,7 +308,7 @@ window.go = go;
     //
     // // show and hide help screen
     // function toggleHelp(active) {
-    //     var visibility = active ? "visible" : "hidden";
+        // var visibility = active ? "visible" : "hidden";
     //     document.getElementById('help').style.visibility = visibility;
     //     // help-blocker prevents map interaction while help is visible
     //     document.getElementById('help-blocker').style.visibility = visibility;
@@ -340,6 +342,15 @@ window.go = go;
         }
     };
 
+    function resizeTempCanvas() {
+        var tempCanvas = document.getElementById("tempCanvas");
+        // can't use 'scene' here because three.js also uses scene :/
+        tempCanvas.width = map._layers[50].scene.canvas.width;
+        tempCanvas.height = map._layers[50].scene.canvas.height;
+        // tempCanvas.width = scene.canvas.width;
+        // tempCanvas.height = scene.canvas.height;
+    }
+    window.resizeTempCanvas = resizeTempCanvas;
     /***** Render loop *****/
     window.addEventListener('load', function () {
         // Scene initialized
@@ -356,24 +367,23 @@ window.go = go;
             scene_loaded = true;
 
             sliderState(false);
+
+            var originalDPR = Tangram.debug.Utils.device_pixel_ratio;
+            Tangram.debug.Utils.updateDevicePixelRatio = function() {
+                var prev = Tangram.debug.Utils.device_pixel_ratio;
+                Tangram.debug.Utils.device_pixel_ratio = originalDPR / tempFactor;
+                return Tangram.debug.Utils.device_pixel_ratio !== prev;
+            }
+
+    
+            scene.updateConfig()
+
             tempCanvas = document.createElement("canvas");
             tempCanvas.id = "tempCanvas";
-            document.body.appendChild(tempCanvas);
-            // tempCanvas.style.visible = "hidden";
-            tempCanvas.style.zIndex = 10000;
-            tempCanvas.width = scene.canvas.width/tempFactor; 
-            tempCanvas.height = scene.canvas.height/tempFactor;
+            document.body.insertBefore(tempCanvas, document.body.childNodes[0]);
+            tempCanvas.width = map._layers[50].scene.canvas.width / tempFactor;
+            tempCanvas.height = map._layers[50].scene.canvas.height / tempFactor;
     
-            // threeCanvas = document.createElement("canvas");
-            // threeCanvas.id = "threeCanvas";
-            // document.body.appendChild(threeCanvas);
-            // threeCanvas.style.position = "absolute";
-            // threeCanvas.style.border = "2px solid blue";
-            // threeCanvas.style.zIndex = 10000;
-            // threeCanvas.style.top = scene.canvas.height/4+"px";
-            // threeCanvas.width = scene.canvas.width/4; 
-            // threeCanvas.height = scene.canvas.height/4;
-
             threestart();
             var scaleVal = 25.0;
             uniforms[ "uDisplacementScale" ].value = scaleVal;
@@ -383,11 +393,10 @@ window.go = go;
 
             map._controlContainer.style.display = "none";
             document.getElementsByClassName('dg')[1].style.display = "none";
-            // document.getElementsByClassName('dg')[1].style.opacity = 0;
             dat.GUI.toggleHide();
 
-
         });
+
         layer.addTo(map);
 
         // bind help div onclicks
@@ -405,6 +414,12 @@ window.go = go;
         map.on("movestart", function (e) { moving = true; });
         map.on("moveend", function (e) { moveend(e) });
 
+        window.onresize = function (e) {
+            // console.log('resize')
+            resizeTempCanvas();
+            resizeGeometry();
+            renderer.setSize( container.clientWidth, container.clientHeight );
+        };
     });
 
     return map;

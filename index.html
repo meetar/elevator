@@ -34,11 +34,12 @@
             width: 100%;
             position: absolute;
             z-index: 0;
-            /*visibility: hidden;*/
+            overflow: hidden
+            border: 2px solid gold;
         }
 
         #map-blocker {
-            visibility: visible;
+            /*visibility: hidden;*/
             position: absolute;
             left: 0;
             top: 0;
@@ -49,6 +50,10 @@
             opacity: 1;
             content: ' ';
             pointer-events: none;
+            background-image: url("loadbar.gif");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center; 
         }
 
         ::-webkit-scrollbar {
@@ -61,7 +66,7 @@
             -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
         }
 
-        #container {
+        #threecontainer {
             height: 100%;
             width: 100%;
             position: absolute;
@@ -71,11 +76,19 @@
             overflow: hidden;
         }
 
+        #tempCanvas {
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            overflow: visible;
+            z-index: 101;
+        }
+
     </style>
   </head>
 
   <body>
-  <div id="container"></div>
+  <div id="threecontainer"></div>
     <!-- <div id="help-blocker"></div> -->
     <div id="map-blocker"></div>
 
