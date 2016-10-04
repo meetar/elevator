@@ -105,6 +105,7 @@ function threestart() {
     scene.add(mesh);
  
     update();
+    adjustFOV();
 }
 
 function resizeGeometry() {
@@ -116,7 +117,20 @@ function resizeGeometry() {
         geometry.height = 256;
         geometry.width = 256*aspect;
     }
-    
+    adjustFOV();    
+}
+
+function adjustFOV() {
+    var dist = 583;
+    var aspect = window.innerHeight / window.innerWidth;
+    var width = geometry.width;
+    var fov;
+    if (aspect < 1 ) fov = 2 * Math.atan( ( width / aspect ) / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
+    else fov = 2 * Math.atan( height / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
+    camera.fov = fov / Math.log(window.innerWidth) * 3;
+    console.log('fov', fov, 'width:', window.innerWidth, 'dpr:', Tangram.debug.Utils.device_pixel_ratio, 'cam.fov:', camera.fov)
+    camera.updateProjectionMatrix();
+    render();
 }
 
 function update() {
