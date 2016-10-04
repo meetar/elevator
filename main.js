@@ -262,6 +262,9 @@ map = (function () {
             expose();
             scene.requestRedraw();
         });
+        gui.note = "press H to hide/show controls";
+        gui.add(gui, 'note');
+        gui.__controllers[3].domElement.firstChild.setAttribute("readonly", true);
         // gui.map_lines = false;
         // gui.add(gui, 'map_lines').name("map lines").onChange(function(value) {
         //     toggleLines(value);
@@ -391,9 +394,9 @@ window.go = go;
             document.body.insertBefore(map._controlContainer, document.body.childNodes[0]);
             map._controlContainer.style.zindex = 100;
 
-            map._controlContainer.style.display = "none";
-            document.getElementsByClassName('dg')[1].style.display = "none";
-            dat.GUI.toggleHide();
+            // map._controlContainer.style.display = "none";
+            // document.getElementsByClassName('dg')[1].style.display = "none";
+            // dat.GUI.toggleHide();
 
         });
 
