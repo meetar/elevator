@@ -49,7 +49,7 @@ function threestart() {
     controls.dynamicDampingFactor = 0.3;
     controls.addEventListener( 'change', render );
 
-    
+
     // --- Lights
             
     // pointLight = new THREE.PointLight( 0xffffff, 1.0 );
@@ -63,7 +63,7 @@ function threestart() {
     ambientLight.position.set(0, 100, -200);
 
 
-    
+
     // MATERIAL
 
     dispTexture = new THREE.Texture(canvas);
@@ -104,9 +104,8 @@ function threestart() {
     mesh = new THREE.Mesh( geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
-
-    update();
     adjustFOV();
+    update();
 }
 
 function resizeGeometry() {
@@ -118,7 +117,7 @@ function resizeGeometry() {
         geometry.height = georez;
         geometry.width = georez*aspect;
     }
-    adjustFOV();    
+    adjustFOV();
 }
 
 function adjustFOV() {
@@ -135,9 +134,9 @@ function adjustFOV() {
 }
 
 function update() {
-    if (typeof dispTexture !== 'undefined') dispTexture.needsUpdate = true;
+    dispTexture.needsUpdate = true;
     render();
-    if (typeof controls !== 'undefined') controls.update(); // trackball interaction
+    controls.update(); // trackball interaction
 }
 
 function render() {
