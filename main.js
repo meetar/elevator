@@ -231,6 +231,7 @@ map = (function () {
             scene.styles.hillshade.shaders.uniforms.u_min = value;
             scene.requestRedraw();
         });
+
         // gui.scaleFactor = 1 +'';
         // gui.add(gui, 'scaleFactor').name("z:x scale factor");
         // gui.autoexpose = true;
@@ -285,19 +286,21 @@ map = (function () {
         // gui.add(gui, 'help');
         // // set scale factor text field to be uneditable but still selectable (for copying)
         // gui.__controllers[2].domElement.firstChild.setAttribute("readonly", true);
-
     }
-function stop() {
-    console.log('stopping')
-    stopped = true;
-    console.log('stopping:', stopped)
-    
-}
-function go() {
-    stopped = false;
-}
-window.stop = stop;
-window.go = go;
+
+    function stop() {
+        console.log('stopping')
+        stopped = true;
+        console.log('stopping:', stopped)
+        
+    }
+
+    function go() {
+        stopped = false;
+    }
+
+    window.stop = stop;
+    window.go = go;
 
     // disable sliders when autoexpose is on
     function sliderState(active) {
