@@ -29,23 +29,17 @@
         ul { color: #666; }
 
         #map {
-            /*visibility: hidden;*/
             background: rgba(0, 0, 0, 0);
             height: 100%;
             width: 100%;
             position: absolute;
             z-index: 0;
-            /*border: 2px solid gold;*/
+            overflow: hidden
+            border: 2px solid gold;
         }
 
-/*        #map canvas {
-            border: 4px solid purple;
-            height: 10px;
-            width: 10px;
-        }
-*/
         #map-blocker {
-            visibility: hidden;
+            /*visibility: hidden;*/
             position: absolute;
             left: 0;
             top: 0;
@@ -72,7 +66,7 @@
             -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
         }
 
-        #container {
+        #threecontainer {
             height: 100%;
             width: 100%;
             position: absolute;
@@ -82,11 +76,19 @@
             overflow: hidden;
         }
 
+        #tempCanvas {
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            overflow: visible;
+            z-index: 101;
+        }
+
     </style>
   </head>
 
   <body>
-  <div id="container"></div>
+  <div id="threecontainer"></div>
     <!-- <div id="help-blocker"></div> -->
     <div id="map-blocker"></div>
 

@@ -358,47 +358,21 @@ window.go = go;
             sliderState(false);
 
             var originalDPR = Tangram.debug.Utils.device_pixel_ratio;
-            console.log('old DPR:', originalDPR)
             Tangram.debug.Utils.updateDevicePixelRatio = function() {
                 var prev = Tangram.debug.Utils.device_pixel_ratio;
-                Tangram.debug.Utils.device_pixel_ratio = 1 / tempFactor;
-                console.log('new DPR:', Tangram.debug.Utils.device_pixel_ratio)
-                console.log('old DPR 2:', originalDPR)
+                Tangram.debug.Utils.device_pixel_ratio = originalDPR / tempFactor;
                 return Tangram.debug.Utils.device_pixel_ratio !== prev;
             }
-// debugger;
+
     
             scene.updateConfig()
-
-            // scene.canvas.height /= tempFactor;
-            // scene.canvas.width /= tempFactor;
 
             tempCanvas = document.createElement("canvas");
             tempCanvas.id = "tempCanvas";
             document.body.insertBefore(tempCanvas, document.body.childNodes[0]);
-            // tempCanvas.style.visibility = "hidden";
-            tempCanvas.style.position = "absolute";
-            tempCanvas.style.pointerEvents = "none";
-            tempCanvas.style.overflow = "visible";
-            tempCanvas.style.border = "2px solid blue";
-            tempCanvas.style.zIndex = 101;
-            tempCanvas.width /= originalDPR; 
-            tempCanvas.height /= originalDPR;
-            tempCanvas.width *= tempFactor; 
-            tempCanvas.height *= tempFactor;
-            // tempCanvas.width *= tempFactor; 
-            // tempCanvas.height *= tempFactor;
+            tempCanvas.width = map._layers[50].scene.canvas.width / tempFactor;
+            tempCanvas.height = map._layers[50].scene.canvas.height / tempFactor;
     
-            // threeCanvas = document.createElement("canvas");
-            // threeCanvas.id = "threeCanvas";
-            // document.body.appendChild(threeCanvas);
-            // threeCanvas.style.position = "absolute";
-            // threeCanvas.style.border = "2px solid blue";
-            // threeCanvas.style.zIndex = 10000;
-            // threeCanvas.style.top = scene.canvas.height/4+"px";
-            // threeCanvas.width = scene.canvas.width/4; 
-            // threeCanvas.height = scene.canvas.height/4;
-
             threestart();
             var scaleVal = 25.0;
             uniforms[ "uDisplacementScale" ].value = scaleVal;
@@ -408,17 +382,11 @@ window.go = go;
 
             map._controlContainer.style.display = "none";
             document.getElementsByClassName('dg')[1].style.display = "none";
-            // document.getElementsByClassName('dg')[1].style.opacity = 0;
             dat.GUI.toggleHide();
-
 
         });
 
         layer.addTo(map);
-            // scene.canvas.height = "100%";
-            // scene.canvas.width = "100%";
-            // map._container.height = "100%";
-            // map._container.width = "100%";
 
         // bind help div onclicks
         // document.getElementById('help').onclick = function(){toggleHelp(false)};

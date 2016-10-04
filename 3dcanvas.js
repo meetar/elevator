@@ -8,7 +8,7 @@ var heightmap, diffTexture, dispTexture;
 
 function threestart() {
 
-    container = document.getElementById( 'container' );
+    container = document.getElementById( 'threecontainer' );
     canvas = document.getElementById("tempCanvas");
 
     // --- WebGl render
@@ -32,8 +32,8 @@ function threestart() {
     var height = renderer.domElement.height;
     var aspect = width / height; // view aspect ratio
     camera = new THREE.PerspectiveCamera( fov, aspect );
-    camera.position.z = -400;
-    camera.position.y = -600;
+    camera.position.z = -500;
+    camera.position.y = -300;
     camera.lookAt(scene.position);
     camera.updateMatrix();
 
