@@ -92,17 +92,31 @@ function threestart() {
     
     // GEOMETRY
     var c = document.getElementById("container");
-    geometry = new THREE.PlaneGeometry(256, 256, 256, 256);
+    var aspect = window.innerHeight / window.innerWidth;
+    if (window.innerHeight < window.innerWidth) {
+        geometry = new THREE.PlaneGeometry(256, 256*aspect, 256, 256*aspect);
+    } else {
+        geometry = new THREE.PlaneGeometry(256*aspect, 256, 256*aspect, 256);
+    }
     // geometry = new THREE.PlaneGeometry(c.clientWidth, c.clientWidth, c.clientHeight, c.clientHeight);
     geometry.computeTangents();
     mesh = new THREE.Mesh( geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
-
-    
-    setInterval("update()", 30);
  
     update();
+}
+
+function resizeGeometry() {
+    var aspect = window.innerHeight / window.innerWidth;
+    if (window.innerHeight < window.innerWidth) {
+        geometry.width = 256;
+        geometry.height = 256*aspect;
+    } else {
+        geometry.height = 256;
+        geometry.width = 256*aspect;
+    }
+    
 }
 
 function update() {
@@ -112,7 +126,7 @@ function update() {
 }
 
 function render() {
-    // renderer.clear();
+    renderer.clear();
     renderer.render(scene, camera);
 }
 
