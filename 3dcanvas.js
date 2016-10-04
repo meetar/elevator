@@ -127,8 +127,8 @@ function adjustFOV() {
     var fov;
     if (aspect < 1 ) fov = 2 * Math.atan( ( width / aspect ) / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
     else fov = 2 * Math.atan( height / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
-    camera.fov = fov / Math.log(window.innerWidth) * 3;
-    console.log('fov', fov, 'width:', window.innerWidth, 'dpr:', Tangram.debug.Utils.device_pixel_ratio, 'cam.fov:', camera.fov)
+    camera.fov = fov / Math.log(window.innerWidth) * 2.5;
+    // console.log('fov', fov, 'width:', window.innerWidth, 'dpr:', Tangram.debug.Utils.device_pixel_ratio, 'cam.fov:', camera.fov)
     camera.updateProjectionMatrix();
     render();
 }
