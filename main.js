@@ -42,7 +42,7 @@ map = (function () {
 
     var layer = Tangram.leafletLayer({
         scene: 'scene.yaml',
-        attribution: 'Map by <a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="https://github.com/tangram/heightmapper" target="_blank">Fork This</a>',
+        attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="https://threejs.org" target="_blank">three.js</a> | <a href="https://github.com/meetar/elevator" target="_blank">Fork This</a>',
         postUpdate: function() {
             if (!stopped) {
                 // three stages:
