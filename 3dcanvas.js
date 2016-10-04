@@ -5,6 +5,7 @@ var camera, scene, renderer, container;
 var light, pointLight, geometry, mesh;
 var uniforms, material;
 var heightmap, diffTexture, dispTexture;
+var georez = 256;
 
 function threestart() {
 
@@ -36,6 +37,7 @@ function threestart() {
     camera.position.y = -300;
     camera.lookAt(scene.position);
     camera.updateMatrix();
+
 
     controls = new THREE.TrackballControls( camera, renderer.domElement );
     controls.rotateSpeed = 3.0;
@@ -94,16 +96,15 @@ function threestart() {
     var c = document.getElementById("container");
     var aspect = window.innerHeight / window.innerWidth;
     if (window.innerHeight < window.innerWidth) {
-        geometry = new THREE.PlaneGeometry(256, 256*aspect, 256, 256*aspect);
+        geometry = new THREE.PlaneGeometry(georez, Math.round(georez*aspect), georez, Math.round(georez*aspect));
     } else {
-        geometry = new THREE.PlaneGeometry(256*aspect, 256, 256*aspect, 256);
+        geometry = new THREE.PlaneGeometry(Math.round(georez*aspect), georez, Math.round(georez*aspect), georez);
     }
-    // geometry = new THREE.PlaneGeometry(c.clientWidth, c.clientWidth, c.clientHeight, c.clientHeight);
     geometry.computeTangents();
     mesh = new THREE.Mesh( geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
- 
+
     update();
     adjustFOV();
 }
@@ -111,11 +112,11 @@ function threestart() {
 function resizeGeometry() {
     var aspect = window.innerHeight / window.innerWidth;
     if (window.innerHeight < window.innerWidth) {
-        geometry.width = 256;
-        geometry.height = 256*aspect;
+        geometry.width = georez;
+        geometry.height = georez*aspect;
     } else {
-        geometry.height = 256;
-        geometry.width = 256*aspect;
+        geometry.height = georez;
+        geometry.width = georez*aspect;
     }
     adjustFOV();    
 }
@@ -134,9 +135,9 @@ function adjustFOV() {
 }
 
 function update() {
-    dispTexture.needsUpdate = true;
+    if (typeof dispTexture !== 'undefined') dispTexture.needsUpdate = true;
     render();
-    controls.update(); // trackball interaction
+    if (typeof controls !== 'undefined') controls.update(); // trackball interaction
 }
 
 function render() {
