@@ -107,13 +107,12 @@ function threestart() {
 
 function update() {
     dispTexture.needsUpdate = true;
-
     render();
     controls.update(); // trackball interaction
 }
 
 function render() {
-    renderer.clear();
+    // renderer.clear();
     renderer.render(scene, camera);
 }
 

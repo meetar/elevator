@@ -19,7 +19,7 @@ map = (function () {
     var diff = null;
     var stopped = false; // emergency brake
     var widening = false;
-    var tempFactor = 4; // size of tempCanvas relative to main canvas: 1/n
+    var tempFactor = 2; // size of tempCanvas relative to main canvas: 1/n
 
     /*** URL parsing ***/
 
@@ -356,13 +356,38 @@ window.go = go;
             scene_loaded = true;
 
             sliderState(false);
+
+            var originalDPR = Tangram.debug.Utils.device_pixel_ratio;
+            console.log('old DPR:', originalDPR)
+            Tangram.debug.Utils.updateDevicePixelRatio = function() {
+                var prev = Tangram.debug.Utils.device_pixel_ratio;
+                Tangram.debug.Utils.device_pixel_ratio = 1 / tempFactor;
+                console.log('new DPR:', Tangram.debug.Utils.device_pixel_ratio)
+                console.log('old DPR 2:', originalDPR)
+                return Tangram.debug.Utils.device_pixel_ratio !== prev;
+            }
+// debugger;
+    
+            scene.updateConfig()
+
+            // scene.canvas.height /= tempFactor;
+            // scene.canvas.width /= tempFactor;
+
             tempCanvas = document.createElement("canvas");
             tempCanvas.id = "tempCanvas";
-            document.body.appendChild(tempCanvas);
-            // tempCanvas.style.visible = "hidden";
-            tempCanvas.style.zIndex = 10000;
-            tempCanvas.width = scene.canvas.width/tempFactor; 
-            tempCanvas.height = scene.canvas.height/tempFactor;
+            document.body.insertBefore(tempCanvas, document.body.childNodes[0]);
+            // tempCanvas.style.visibility = "hidden";
+            tempCanvas.style.position = "absolute";
+            tempCanvas.style.pointerEvents = "none";
+            tempCanvas.style.overflow = "visible";
+            tempCanvas.style.border = "2px solid blue";
+            tempCanvas.style.zIndex = 101;
+            tempCanvas.width /= originalDPR; 
+            tempCanvas.height /= originalDPR;
+            tempCanvas.width *= tempFactor; 
+            tempCanvas.height *= tempFactor;
+            // tempCanvas.width *= tempFactor; 
+            // tempCanvas.height *= tempFactor;
     
             // threeCanvas = document.createElement("canvas");
             // threeCanvas.id = "threeCanvas";
@@ -388,7 +413,12 @@ window.go = go;
 
 
         });
+
         layer.addTo(map);
+            // scene.canvas.height = "100%";
+            // scene.canvas.width = "100%";
+            // map._container.height = "100%";
+            // map._container.width = "100%";
 
         // bind help div onclicks
         // document.getElementById('help').onclick = function(){toggleHelp(false)};
