@@ -351,10 +351,12 @@ map = (function () {
     function resizeTempCanvas() {
         var tempCanvas = document.getElementById("tempCanvas");
         // can't use 'scene' here because three.js also uses scene :/
-        tempCanvas.width = map._layers[50].scene.canvas.width;
-        tempCanvas.height = map._layers[50].scene.canvas.height;
-        // tempCanvas.width = scene.canvas.width;
-        // tempCanvas.height = scene.canvas.height;
+        if (typeof map._layers[50].scene.canvas !== "undefined") {
+            tempCanvas.width = map._layers[50].scene.canvas.width;
+            tempCanvas.height = map._layers[50].scene.canvas.height;
+            // tempCanvas.width = scene.canvas.width;
+            // tempCanvas.height = scene.canvas.height;
+        }
     }
     window.resizeTempCanvas = resizeTempCanvas;
     /***** Render loop *****/
