@@ -389,9 +389,11 @@ map = (function () {
             tempCanvas = document.createElement("canvas");
             tempCanvas.id = "tempCanvas";
             document.body.insertBefore(tempCanvas, document.body.childNodes[0]);
-            tempCanvas.width = map._layers[50].scene.canvas.width / tempFactor;
-            tempCanvas.height = map._layers[50].scene.canvas.height / tempFactor;
-    
+
+            var layer = Object.keys(map._layers)[0];
+            tempCanvas.width = map._layers[layer].scene.canvas.width / tempFactor;
+            tempCanvas.height = map._layers[layer].scene.canvas.height / tempFactor;
+
             threestart();
             var scaleVal = 25.0;
             uniforms[ "uDisplacementScale" ].value = scaleVal;
