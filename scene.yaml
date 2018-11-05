@@ -1,12 +1,12 @@
 sources:
     elevation:
         type: Raster
-        url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
-    mapzen: 
-        type: TopoJSON
-        url: https://meetar.github.io/mapzen-tiles/vector/v1/256/all/{z}/{x}/{y}.topojson
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/terrarium/{z}/{x}/{y}.png?api_key=tsINU1vsQnKLU1jjCimtVw
+    mapzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt?api_key=tsINU1vsQnKLU1jjCimtVw
         max_zoom: 8
-styles: 
+styles:
     hillshade:
         base: raster
         shaders:
