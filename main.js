@@ -113,8 +113,10 @@ map = (function () {
         else diff = 1;
         // was the last change a widening or narrowing?
         widening = diff < 0 ? false : true;
-        scene.styles.hillshade.shaders.uniforms.u_min = levels.min || 0;
-        scene.styles.hillshade.shaders.uniforms.u_max = levels.max || 8900;
+        if (levels) {
+            scene.styles.hillshade.shaders.uniforms.u_min = levels.min;
+            scene.styles.hillshade.shaders.uniforms.u_max = levels.max;
+        }
         scene.requestRedraw();
     }
 
