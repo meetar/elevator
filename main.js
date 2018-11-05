@@ -47,7 +47,7 @@ map = (function () {
             if (!stopped) {
                 // three stages:
                 // 1) start analysis
-                if (!analysing && !done) { 
+                if (!analysing && !done) {
                     expose();
                 }
                 // 2) continue analysis
@@ -63,7 +63,7 @@ map = (function () {
             update();
         }
     });
-    
+
     // from https://davidwalsh.name/javascript-debounce-function
     function debounce(func, wait, immediate) {
         var timeout;
@@ -113,8 +113,8 @@ map = (function () {
         else diff = 1;
         // was the last change a widening or narrowing?
         widening = diff < 0 ? false : true;
-        scene.styles.hillshade.shaders.uniforms.u_min = levels.min;
-        scene.styles.hillshade.shaders.uniforms.u_max = levels.max;
+        scene.styles.hillshade.shaders.uniforms.u_min = levels.min || 0;
+        scene.styles.hillshade.shaders.uniforms.u_max = levels.max || 8900;
         scene.requestRedraw();
     }
 
@@ -292,7 +292,7 @@ map = (function () {
         console.log('stopping')
         stopped = true;
         console.log('stopping:', stopped)
-        
+
     }
 
     function go() {
@@ -351,9 +351,9 @@ map = (function () {
     function resizeTempCanvas() {
         var tempCanvas = document.getElementById("tempCanvas");
         // can't use 'scene' here because three.js also uses scene :/
-        if (typeof map._layers[50].scene.canvas !== "undefined") {
-            tempCanvas.width = map._layers[50].scene.canvas.width;
-            tempCanvas.height = map._layers[50].scene.canvas.height;
+        if (typeof map._layers[26].scene.canvas !== "undefined") {
+            tempCanvas.width = map._layers[26].scene.canvas.width;
+            tempCanvas.height = map._layers[26].scene.canvas.height;
             // tempCanvas.width = scene.canvas.width;
             // tempCanvas.height = scene.canvas.height;
         }
@@ -383,7 +383,7 @@ map = (function () {
                 return Tangram.debug.Utils.device_pixel_ratio !== prev;
             }
 
-    
+
             scene.updateConfig()
 
             tempCanvas = document.createElement("canvas");
