@@ -5,14 +5,12 @@ map = (function () {
 
     var map_start_location = [0, 0, 2];
     var global_min = 0;
-    var global_max = 8900;
     var uminValue, umaxValue; // storage
     var scene_loaded = false;
     var moving = false;
     var analysing = false;
     var done = false;
     var tempCanvas;
-    var threeCanvas;
     var spread = 1;
     var lastumax = null;
     var diff = null;
