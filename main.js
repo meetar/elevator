@@ -188,7 +188,10 @@ map = (function () {
         minadj = gui.include_oceans ? minadj : Math.max(minadj, 0);
 
         // keep min and max separated
-        if (minadj === maxadj) maxadj += 10;
+        if (maxadj == minadj) {
+            minadj -= 1;
+            maxadj += 1;
+        }
 
         // get the width of the current view in meters
         // compare to the current elevation range in meters
@@ -337,7 +340,7 @@ map = (function () {
     document.onkeydown = function (e) {
         e = e || window.event;
         // listen for 'h'
-        if (e.which == 72 && document.activeElement != document.getElementsByClassName('leaflet-pelias-input')[0]) {
+        if (e.which == 72) {
             // toggle UI
             var display = map._controlContainer.style.display;
             map._controlContainer.style.display = (display === "none") ? "block" : "none";
@@ -352,11 +355,10 @@ map = (function () {
     function resizeTempCanvas() {
         var tempCanvas = document.getElementById("tempCanvas");
         // can't use 'scene' here because three.js also uses scene :/
-        if (typeof map._layers[26].scene.canvas !== "undefined") {
-            tempCanvas.width = map._layers[26].scene.canvas.width;
-            tempCanvas.height = map._layers[26].scene.canvas.height;
-            // tempCanvas.width = scene.canvas.width;
-            // tempCanvas.height = scene.canvas.height;
+        var layer = Object.keys(map._layers)[0];
+        if (typeof map._layers[layer].scene.canvas !== "undefined") {
+            tempCanvas.width = map._layers[layer].scene.canvas.width;
+            tempCanvas.height = map._layers[layer].scene.canvas.height;
         }
     }
     window.resizeTempCanvas = resizeTempCanvas;
@@ -426,7 +428,6 @@ map = (function () {
         map.on("moveend", function (e) { moveend(e) });
 
         window.onresize = function (e) {
-            // console.log('resize')
             resizeTempCanvas();
             resizeGeometry();
             renderer.setSize( container.clientWidth, container.clientHeight );
