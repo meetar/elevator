@@ -42,7 +42,7 @@ map = (function () {
         scene: 'scene.yaml',
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="https://threejs.org" target="_blank">three.js</a> | <a href="https://github.com/meetar/elevator" target="_blank">Fork This</a>',
         postUpdate: function() {
-            if (!stopped) {
+            if (gui.autoexpose && !stopped) {
                 // three stages:
                 // 1) start analysis
                 if (!analysing && !done) {
@@ -56,6 +56,8 @@ map = (function () {
                 else if (done) {
                     done = false;
                 }
+            } else {
+                drawTempImage();
             }
             // update three.js display
             update();
@@ -85,7 +87,7 @@ map = (function () {
 
     function expose() {
         analysing = true;
-        if (typeof gui != 'undefined') return false;
+        if (typeof gui != 'undefined' && !gui.autoexpose) return false;
         if (scene_loaded) {
             start_analysis();
         } else {
@@ -106,25 +108,28 @@ map = (function () {
     function start_analysis() {
         // set levels
         var levels = analyse();
-        diff = levels.max - lastumax;
-        if (typeof levels.max !== 'undefined') lastumax = levels.max;
-        else diff = 1;
-        // was the last change a widening or narrowing?
-        widening = diff < 0 ? false : true;
         if (levels) {
+            diff = levels.max - lastumax;
+            lastumax = levels.max;
             scene.styles.hillshade.shaders.uniforms.u_min = levels.min;
             scene.styles.hillshade.shaders.uniforms.u_max = levels.max;
-        }
+        } else diff = 1;
+        // was the last change a widening or narrowing?
+        widening = diff < 0 ? false : true;
         scene.requestRedraw();
     }
 
-    function analyse() {
+    function drawTempImage() {
         var ctx = tempCanvas.getContext("2d"); // Get canvas 2d context
         ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 
         // copy main scene canvas into the tempCanvas with the 2d context
         ctx.drawImage(scene.canvas,0,0,scene.canvas.width,scene.canvas.height);
+        return ctx;
+    }
 
+    function analyse() {
+        var ctx = drawTempImage();
         // get all the pixels
         var pixels = ctx.getImageData(0,0, tempCanvas.width, tempCanvas.height);
 
@@ -191,16 +196,14 @@ map = (function () {
         // multiply it by the width of your 3D mesh to get the height
         var zrange = (gui.u_max - gui.u_min);
         var xscale = zrange / scene.view.size.meters.x;
-        // gui.scaleFactor = xscale +''; // convert to string to make the display read-only
+        gui.scaleFactor = xscale +''; // convert to string to make the display read-only
 
         scene.styles.hillshade.shaders.uniforms.u_min = minadj;
         scene.styles.hillshade.shaders.uniforms.u_max = maxadj;
-
         // update dat.gui controllers
         gui.u_min = minadj;
         gui.u_max = maxadj;
         updateGUI();
-
         return {max: maxadj, min: minadj}
     }
 
@@ -230,28 +233,28 @@ map = (function () {
             scene.requestRedraw();
         });
 
-        // gui.scaleFactor = 1 +'';
-        // gui.add(gui, 'scaleFactor').name("z:x scale factor");
-        // gui.autoexpose = true;
-        // gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
-        //     sliderState(!value);
-        //     if (value) {
-        //         // store slider values
-        //         uminValue = gui.u_min;
-        //         umaxValue = gui.u_max;
-        //         // force widening value to trigger redraw
-        //         lastumax = 0;
-        //         expose();
-        //     } else if (typeof uminValue != 'undefined') {
-        //         // retrieve slider values
-        //         scene.styles.hillshade.shaders.uniforms.u_min = uminValue;
-        //         scene.styles.hillshade.shaders.uniforms.u_max = umaxValue;
-        //         scene.requestRedraw();
-        //         gui.u_min = uminValue;
-        //         gui.u_max = umaxValue;
-        //         updateGUI();
-        //     }
-        // });
+        gui.scaleFactor = 1 +'';
+        gui.add(gui, 'scaleFactor').name("z:x scale factor");
+        gui.autoexpose = true;
+        gui.add(gui, 'autoexpose').name("auto-exposure").onChange(function(value) {
+            sliderState(!value);
+            if (value) {
+                // store slider values
+                uminValue = gui.u_min;
+                umaxValue = gui.u_max;
+                // force widening value to trigger redraw
+                lastumax = 0;
+                expose();
+            } else if (typeof uminValue != 'undefined') {
+                // retrieve slider values
+                scene.styles.hillshade.shaders.uniforms.u_min = uminValue;
+                scene.styles.hillshade.shaders.uniforms.u_max = umaxValue;
+                scene.requestRedraw();
+                gui.u_min = uminValue;
+                gui.u_max = umaxValue;
+                updateGUI();
+            }
+        });
         gui.include_oceans = false;
         gui.add(gui, 'include_oceans').name("include ocean data").onChange(function(value) {
             if (value) global_min = -11000;
