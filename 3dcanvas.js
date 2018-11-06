@@ -1,6 +1,6 @@
 
 var canvas;
-            
+
 var camera, scene, renderer, container;
 var light, pointLight, geometry, mesh;
 var uniforms, material;
@@ -33,8 +33,8 @@ function threestart() {
     var height = renderer.domElement.height;
     var aspect = width / height; // view aspect ratio
     camera = new THREE.PerspectiveCamera( fov, aspect );
-    camera.position.z = -500;
-    camera.position.y = -300;
+    camera.position.z = -450;
+    camera.position.y = -250;
     camera.lookAt(scene.position);
     camera.updateMatrix();
 
@@ -51,15 +51,15 @@ function threestart() {
 
 
     // --- Lights
-            
+
     // pointLight = new THREE.PointLight( 0xffffff, 1.0 );
     // scene.add( pointLight );
-    
+
     // pointLight.position.set(0, 100, -200);
-            
+
     ambientLight = new THREE.AmbientLight( 0xffffff, 1.0 );
     scene.add( ambientLight );
-    
+
     ambientLight.position.set(0, 100, -200);
 
 
@@ -67,21 +67,21 @@ function threestart() {
     // MATERIAL
 
     dispTexture = new THREE.Texture(canvas);
-    
+
     var shader = THREE.ShaderLib[ "normalmap" ];
     uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-    
+
     uniforms[ "enableDisplacement" ] = { type: 'i', value: 1 };
     uniforms[ "tDisplacement" ] = { type: 't', value: dispTexture };
     uniforms[ "uDisplacementScale" ] = { type: 'f', value: 35 };
-    
+
     uniforms[ "enableDiffuse" ] = { type: 'i', value: 1 };
     uniforms[ "tDiffuse" ].value = dispTexture;
 
     uniforms[ "tNormal" ] = { type: 't', value: new THREE.ImageUtils.loadTexture( 'flat.png' )};
-    
-    
-    
+
+
+
     material = new THREE.ShaderMaterial( {
         uniforms: uniforms,
         vertexShader: shader.vertexShader,
@@ -91,7 +91,7 @@ function threestart() {
         side: THREE.DoubleSide
     } );
 
-    
+
     // GEOMETRY
     var c = document.getElementById("container");
     var aspect = window.innerHeight / window.innerWidth;
