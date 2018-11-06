@@ -160,16 +160,14 @@ map = (function () {
             analysing = false;
             done = true;
             spread = 2;
-            return false;
         }
-        if (max > 252 && min < 4 && widening) {
+        if (max === 255 && min === 0 && widening) {
             // over-exposed, widen the range
             spread *= 2;
             // cap spread
             spread = Math.min(spread, 512)
-            // console.log("WIDEN >", spread, "   diff:", diff)
-            max += spread;
-            min -= spread;
+            max += spread / 2;
+            min -= spread / 2;
         }
 
         // calculate adjusted elevation settings based on current pixel
