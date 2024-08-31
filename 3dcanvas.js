@@ -1,3 +1,6 @@
+import { DragControls } from "three/addons/controls/DragControls.js";
+import { TrackballControls } from "three/addons/controls/TrackballControls.js";
+import * as THREE from "three";
 
 var canvas;
 

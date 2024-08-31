@@ -1,0 +1,29 @@
+{
+  "name": "elevator",
+  "version": "1.0.0",
+  "description": "An elevation visualizer.",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meetar/elevator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meetar/elevator/issues"
+  },
+  "homepage": "https://github.com/meetar/elevator#readme",
+  "dependencies": {
+    "three": "^0.168.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.2"
+  }
+}
