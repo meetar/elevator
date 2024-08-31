@@ -1,6 +1,8 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
-map = (function () {
+import { update, threestart, resizeGeometry } from "./3dcanvas";
+
+var map = (function () {
     'use strict';
 
     var map_start_location = [0, 0, 2];
@@ -120,7 +122,7 @@ map = (function () {
     }
 
     function drawTempImage() {
-        var ctx = tempCanvas.getContext("2d"); // Get canvas 2d context
+        var ctx = tempCanvas.getContext("2d", { willReadFrequently: true }); // Get canvas 2d context
         ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 
         // copy main scene canvas into the tempCanvas with the 2d context
@@ -131,7 +133,7 @@ map = (function () {
     function analyse() {
         var ctx = drawTempImage();
         // get all the pixels
-        var pixels = ctx.getImageData(0,0, tempCanvas.width, tempCanvas.height);
+        var pixels = ctx.getImageData(0,0, tempCanvas.width, tempCanvas.height, );
 
         var val;
         var counts = {};

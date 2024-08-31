@@ -5,12 +5,13 @@ import * as THREE from "three";
 var canvas;
 
 var camera, scene, renderer, container;
-var light, pointLight, geometry, mesh;
+var pointLight, ambientLight, geometry, mesh;
 var uniforms, material;
-var heightmap, diffTexture, dispTexture;
+var dispTexture;
 var georez = 256;
+var controls, dragcontrols;
 
-function threestart() {
+export function threestart() {
 
     container = document.getElementById( 'threecontainer' );
     canvas = document.getElementById("tempCanvas");
@@ -42,7 +43,7 @@ function threestart() {
     camera.updateMatrix();
 
 
-    controls = new THREE.TrackballControls( camera, renderer.domElement );
+    controls = new TrackballControls( camera );
     controls.rotateSpeed = 3.0;
     controls.zoomSpeed = 1.2;
     controls.panSpeed = 0.8;
@@ -71,19 +72,21 @@ function threestart() {
 
     dispTexture = new THREE.Texture(canvas);
 
-    var shader = THREE.ShaderLib[ "normalmap" ];
-    uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+    var shader = THREE.ShaderLib["standard"];
+    uniforms = THREE.UniformsUtils.clone(shader.uniforms);
 
     uniforms[ "enableDisplacement" ] = { type: 'i', value: 1 };
     uniforms[ "tDisplacement" ] = { type: 't', value: dispTexture };
     uniforms[ "uDisplacementScale" ] = { type: 'f', value: 35 };
 
     uniforms[ "enableDiffuse" ] = { type: 'i', value: 1 };
-    uniforms[ "tDiffuse" ].value = dispTexture;
+    uniforms[ "map" ].value = dispTexture;
 
-    uniforms[ "tNormal" ] = { type: 't', value: new THREE.ImageUtils.loadTexture( 'flat.png' )};
-
-
+    uniforms["normalMap"] = {
+        type: "t",
+        value: new THREE.TextureLoader().load("flat.png"),
+        //     value: dispTexture,
+    };
 
     material = new THREE.ShaderMaterial( {
         uniforms: uniforms,
@@ -91,7 +94,8 @@ function threestart() {
         fragmentShader: shader.fragmentShader,
         // lights: false,
         lights: true,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        wireframe: true,
     } );
 
 
@@ -107,11 +111,22 @@ function threestart() {
     mesh = new THREE.Mesh( geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
+
+    dragcontrols = new DragControls([mesh], camera, renderer.domElement);
+
+    dragcontrols.addEventListener("dragstart", function (event) {
+        console.log("dragStart");
+    });
+
+    dragcontrols.addEventListener("dragend", function (event) {
+        console.log("dragEnd");
+    });
+
     adjustFOV();
     update();
 }
 
-function resizeGeometry() {
+export function resizeGeometry() {
     var aspect = window.innerHeight / window.innerWidth;
     if (window.innerHeight < window.innerWidth) {
         geometry.width = georez;
@@ -136,7 +151,7 @@ function adjustFOV() {
     render();
 }
 
-function update() {
+export function update() {
     dispTexture.needsUpdate = true;
     render();
     controls.update(); // trackball interaction
