@@ -1,0 +1,110 @@
+<!doctype html>
+<!--
+    Tangram: real-time WebGL rendering for OpenStreetMap
+
+    http://github.com/tangrams/tangram
+    http://mapzen.com
+-->
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tangram Elevator</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+
+    <style>
+        body {
+            margin: 0px;
+            border: 0px;
+            padding: 0px;
+            font-family: sans-serif;
+            font-size: .8em;
+            color: white;
+        }
+        a { color: #666; }
+        ul { color: #666; }
+
+        #map {
+            background: rgba(0, 0, 0, 0);
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        #map-blocker {
+            /* visibility: hidden; */
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-color: #000;
+            opacity: 1;
+            content: ' ';
+            pointer-events: none;
+            background-image: url("/assets/loadbar-BOF1C3SB.gif");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        ::-webkit-scrollbar {
+            -webkit-appearance: none;
+            width: 7px;
+        }
+        ::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            background-color: rgba(0,0,0,.5);
+            -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+        }
+
+        #threecontainer {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0px;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        #tempCanvas {
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            overflow: visible;
+            z-index: 101;
+        }
+
+    </style>
+    <script type="module" crossorigin src="/assets/index-yb_SMBvV.js"></script>
+  </head>
+
+  <body>
+  <div id="threecontainer"></div>
+    <!-- <div id="help-blocker"></div> -->
+    <div id="map-blocker"></div>
+
+    <div id="map"></div>
+
+    <!-- 3rd party libraries -->
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <!-- bog-standard leaflet URL hash -->
+    <script src="lib/leaflet-hash.js"></script>
+    <!-- A lightweight graphical user interface for changing variables in JavaScript.  -->
+    <script src="lib/dat.gui.min.js"></script>
+    <!-- End of 3rd party libraries -->
+
+    <!-- Main tangram library -->
+    <script src="https://unpkg.com/tangram@0.15/dist/tangram.min.js"></script>
+
+
+    <!-- Demo module -->
+
+  </body>
+</html>
