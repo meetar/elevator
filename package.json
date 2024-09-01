@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "An elevation visualizer.",
   "main": "main.js",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,6 +18,9 @@
   },
   "homepage": "https://github.com/meetar/elevator#readme",
   "dependencies": {
+    "dat.gui": "^0.7.9",
+    "leaflet": "^1.9.4",
+    "leaflet-hash": "^0.2.1",
     "three": "^0.168.0"
   },
   "devDependencies": {

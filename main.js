@@ -1,6 +1,7 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
 import { renderer, container, update, threestart, resizeGeometry } from "./3dcanvas";
+import * as dat from 'dat.gui';
 
 var map = (function () {
     'use strict';
@@ -219,7 +220,7 @@ var map = (function () {
     // setView expects format ([lat, long], zoom)
     map.setView(map_start_location.slice(0, 3), map_start_location[2]);
 
-    var hash = new L.Hash(map);
+    // var hash = new L.Hash(map);
 
     // Create dat GUI
     var gui;

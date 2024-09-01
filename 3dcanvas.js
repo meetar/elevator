@@ -20,7 +20,6 @@ export function threestart() {
 
     try {
         renderer = new THREE.WebGLRenderer();
-        renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setSize( container.clientWidth, container.clientHeight );
         renderer.autoClear = false;
         container.appendChild( renderer.domElement );
@@ -56,11 +55,6 @@ export function threestart() {
 
 
     // --- Lights
-
-    // pointLight = new THREE.PointLight( 0xffffff, 1.0 );
-    // scene.add( pointLight );
-
-    // pointLight.position.set(0, 100, -200);
 
     ambientLight = new THREE.AmbientLight( 0xffffff, 3.2 );
     scene.add( ambientLight );
