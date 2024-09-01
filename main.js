@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
-import { update, threestart, resizeGeometry } from "./3dcanvas";
+import { renderer, container, update, threestart, resizeGeometry } from "./3dcanvas";
 
 var map = (function () {
     'use strict';

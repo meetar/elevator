@@ -4,7 +4,7 @@ import * as THREE from "three";
 
 var canvas;
 
-var camera, scene, renderer, container;
+export var camera, scene, renderer, container;
 var pointLight, ambientLight, geometry, mesh;
 var uniforms, material;
 var dispTexture;
@@ -20,6 +20,7 @@ export function threestart() {
 
     try {
         renderer = new THREE.WebGLRenderer();
+        renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setSize( container.clientWidth, container.clientHeight );
         renderer.autoClear = false;
         container.appendChild( renderer.domElement );
@@ -61,7 +62,7 @@ export function threestart() {
 
     // pointLight.position.set(0, 100, -200);
 
-    ambientLight = new THREE.AmbientLight( 0xffffff, 1.0 );
+    ambientLight = new THREE.AmbientLight( 0xffffff, 3.2 );
     scene.add( ambientLight );
 
     ambientLight.position.set(0, 100, -200);
@@ -72,30 +73,10 @@ export function threestart() {
 
     dispTexture = new THREE.Texture(canvas);
 
-    var shader = THREE.ShaderLib["standard"];
-    uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-
-    uniforms[ "enableDisplacement" ] = { type: 'i', value: 1 };
-    uniforms[ "tDisplacement" ] = { type: 't', value: dispTexture };
-    uniforms[ "uDisplacementScale" ] = { type: 'f', value: 35 };
-
-    uniforms[ "enableDiffuse" ] = { type: 'i', value: 1 };
-    uniforms[ "map" ].value = dispTexture;
-
-    uniforms["normalMap"] = {
-        type: "t",
-        value: new THREE.TextureLoader().load("flat.png"),
-        //     value: dispTexture,
-    };
-
-    material = new THREE.ShaderMaterial( {
-        uniforms: uniforms,
-        vertexShader: shader.vertexShader,
-        fragmentShader: shader.fragmentShader,
-        // lights: false,
-        lights: true,
-        side: THREE.DoubleSide,
-        wireframe: true,
+    material = new THREE.MeshStandardMaterial( {
+        map: dispTexture,
+        displacementMap: dispTexture,
+        displacementScale: 30.,
     } );
 
 
@@ -122,7 +103,6 @@ export function threestart() {
         console.log("dragEnd");
     });
 
-    adjustFOV();
     update();
 }
 
