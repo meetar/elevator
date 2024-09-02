@@ -10,6 +10,13 @@ let lastX, lastY;
 let clientX, clientY;
 let uvArray;
 
+document.addEventListener('mousedown', (event) => {
+    // get the offset relative to a grid square on mousedown
+    const initialPos = getWorldPositionFromScreen(event.clientX, event.clientY, mesh);
+    offset.x = (mesh.position.x - initialPos.x) % gridSquareWidth;
+    offset.y = (mesh.position.y - initialPos.y) % gridSquareHeight;
+});
+
 // save client cursor position
 document.addEventListener('mousemove', (event) => {
     lastX = clientX;
@@ -45,11 +52,10 @@ const moveMesh = (e) => {
 
     // get screen position in world space, then track mesh to cursor
     const newpos = getWorldPositionFromScreen(clientX, clientY)
-    // apply initial cursor offset relative to the mesh position, so mesh doesn't jump on first mousedown
-    offset.copy(mesh.position).sub(newpos); 
-    mesh.position.x = (newpos.x + offset.x) % gridSquareWidth;
-    mesh.position.y = (newpos.y + offset.y) % gridSquareHeight;
 
+    // track mesh to cursor, applying offset set by mousedown
+    mesh.position.x = (newpos.x  % gridSquareWidth) + offset.x;
+    mesh.position.y = (newpos.y % gridSquareHeight) + offset.y;
 
     // mesh position from world space to object space
     const inverseMatrix = new THREE.Matrix4().copy(mesh.matrixWorld).invert();
