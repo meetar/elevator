@@ -5,11 +5,12 @@ import * as THREE from "three";
 var canvas;
 
 export var camera, scene, renderer, container;
-var pointLight, ambientLight, geometry, mesh;
-var uniforms, material;
+export var mesh, gridSquareWidth, gridSquareHeight, gridSquareWidthWorld, gridSquareHeightWorld;
+var pointLight, ambientLight, geometry;
+var material;
 var dispTexture;
 var georez = 256;
-var controls, dragcontrols;
+var controls;
 
 export function threestart() {
 
@@ -20,7 +21,6 @@ export function threestart() {
 
     try {
         renderer = new THREE.WebGLRenderer();
-        renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setSize( container.clientWidth, container.clientHeight );
         renderer.autoClear = false;
         container.appendChild( renderer.domElement );
@@ -38,7 +38,8 @@ export function threestart() {
     var height = renderer.domElement.height;
     var aspect = width / height; // view aspect ratio
     camera = new THREE.PerspectiveCamera( fov, aspect );
-    camera.position.z = -450;
+    // camera.position.z = -450;
+    camera.position.z = -900;
     camera.position.y = -250;
     camera.lookAt(scene.position);
     camera.updateMatrix();
@@ -57,11 +58,6 @@ export function threestart() {
 
     // --- Lights
 
-    // pointLight = new THREE.PointLight( 0xffffff, 1.0 );
-    // scene.add( pointLight );
-
-    // pointLight.position.set(0, 100, -200);
-
     ambientLight = new THREE.AmbientLight( 0xffffff, 3.2 );
     scene.add( ambientLight );
 
@@ -77,31 +73,39 @@ export function threestart() {
         map: dispTexture,
         displacementMap: dispTexture,
         displacementScale: 30.,
+        // wireframe: true,
     } );
 
 
     // GEOMETRY
-    var c = document.getElementById("container");
-    var aspect = window.innerHeight / window.innerWidth;
-    if (window.innerHeight < window.innerWidth) {
-        geometry = new THREE.PlaneGeometry(georez, Math.round(georez*aspect), georez, Math.round(georez*aspect));
+
+    const camDistance = Math.abs(camera.position.z);
+    const planeheight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camDistance;
+    const planewidth = planeheight * camera.aspect;
+    const overzoom = 1.1;
+    const meshWidth = planewidth * overzoom;
+    const meshHeight = planeheight * overzoom;
+
+
+    var aspect = window.innerWidth / window.innerHeight;
+    if (window.innerHeight > window.innerWidth) {
+        geometry = new THREE.PlaneGeometry(meshWidth, meshHeight, georez, Math.round(georez * aspect));
     } else {
-        geometry = new THREE.PlaneGeometry(Math.round(georez*aspect), georez, Math.round(georez*aspect), georez);
+        geometry = new THREE.PlaneGeometry(meshWidth, meshHeight, Math.round(georez * aspect), georez);
     }
+    // get grid square size in world space
+    if (window.innerHeight > window.innerWidth) {
+        gridSquareWidth = meshWidth / georez;
+        gridSquareHeight = meshHeight / Math.round(georez * aspect);
+    } else {
+        gridSquareWidth = meshWidth / Math.round(georez * aspect);
+        gridSquareHeight = meshHeight / georez;
+    }
+
     geometry.computeTangents();
-    mesh = new THREE.Mesh( geometry, material);
+    mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
-
-    dragcontrols = new DragControls([mesh], camera, renderer.domElement);
-
-    dragcontrols.addEventListener("dragstart", function (event) {
-        console.log("dragStart");
-    });
-
-    dragcontrols.addEventListener("dragend", function (event) {
-        console.log("dragEnd");
-    });
 
     update();
 }

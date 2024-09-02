@@ -1,8 +1,76 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
-import { renderer, container, update, threestart, resizeGeometry } from "./3dcanvas";
+import { renderer, container, camera, mesh, update, threestart, resizeGeometry, gridSquareWidth, gridSquareHeight } from "./3dcanvas";
+import * as dat from 'dat.gui';
+import * as THREE from 'three';
 
-var map = (function () {
+console.log('Tangram:', Tangram);
+
+let lastX, lastY;
+let clientX, clientY;
+let uvArray;
+
+// save client cursor position
+document.addEventListener('mousemove', (event) => {
+    lastX = clientX;
+    lastY = clientY;
+    clientX = event.clientX;
+    clientY = event.clientY;
+});
+
+// function to convert screen coordinates to world space
+function getWorldPositionFromScreen(screenX, screenY) {
+    // convert screen coordinates to normalized device coordinates (-1 to +1)
+    const ndcX = (screenX / window.innerWidth) * 2 - 1;
+    const ndcY = -(screenY / window.innerHeight) * 2 + 1;
+
+    // create a vector in normalized device space
+    const ndc = new THREE.Vector3(ndcX, ndcY, 0.5); // z = 0.5 is at the middle of the frustum depth
+
+    // unproject this vector back into world space
+    ndc.unproject(camera);
+
+    const dir = ndc.sub(camera.position).normalize(); // get the direction from the camera to the unprojected point
+    const distance = -camera.position.z / dir.z; // distance from the camera to the z = 0 plane
+    const position = camera.position.clone().add(dir.multiplyScalar(distance)); // calculate the world position on that plane
+
+    return position;
+}
+
+let offset = new THREE.Vector3(); // store the offset between the mouse position and mesh position
+
+const moveMesh = (e) => {
+    // get initial uv mapping
+    if (!uvArray) uvArray = mesh.geometry.attributes.uv.array.slice(); // assign by value
+
+    // get screen position in world space, then track mesh to cursor
+    const newpos = getWorldPositionFromScreen(clientX, clientY)
+    // apply initial cursor offset relative to the mesh position, so mesh doesn't jump on first mousedown
+    offset.copy(mesh.position).sub(newpos); 
+    mesh.position.x = (newpos.x + offset.x) % gridSquareWidth;
+    mesh.position.y = (newpos.y + offset.y) % gridSquareHeight;
+
+
+    // mesh position from world space to object space
+    const inverseMatrix = new THREE.Matrix4().copy(mesh.matrixWorld).invert();
+    const movementVector = new THREE.Vector3(mesh.position.x, mesh.position.y, 0).applyMatrix4(inverseMatrix);
+
+    // assuming mesh.geometry is a plane aligned with the X-Y plane
+    const uvMovementX = movementVector.x / mesh.geometry.parameters.width;
+    const uvMovementY = movementVector.y / mesh.geometry.parameters.height;
+
+    // adjust the UVs in the opposite direction to the mesh's movement
+    const uvAttribute = mesh.geometry.attributes.uv;
+    for (let i = 0; i < uvAttribute.array.length; i += 2) {
+        uvAttribute.array[i] += uvMovementX; // U coordinate
+        uvAttribute.array[i + 1] += uvMovementY; // V coordinate
+    }
+
+    uvAttribute.needsUpdate = true;
+
+};
+
+(function () {
     'use strict';
 
     var map_start_location = [0, 0, 2];
@@ -219,7 +287,7 @@ var map = (function () {
     // setView expects format ([lat, long], zoom)
     map.setView(map_start_location.slice(0, 3), map_start_location[2]);
 
-    var hash = new L.Hash(map);
+    // var hash = new L.Hash(map);
 
     // Create dat GUI
     var gui;
@@ -418,6 +486,7 @@ var map = (function () {
         // document.getElementById('help').onclick = function(){toggleHelp(false)};
         // document.getElementById('help-blocker').onclick = function(){toggleHelp(false)};
 
+
         // debounce moveend event
         var moveend = debounce(function(e) {
             moving = false;
@@ -426,8 +495,15 @@ var map = (function () {
             scene.requestRedraw();
         }, 250);
 
-        map.on("movestart", function (e) { moving = true; });
-        map.on("moveend", function (e) { moveend(e) });
+        map.on("movestart", function (e) {
+            moving = true;
+        });
+        map.on("move", function (e) {
+            moveMesh(e);
+        });
+        map.on("moveend", function (e) {
+            moveend(e)
+        });
 
         window.onresize = function (e) {
             resizeTempCanvas();
