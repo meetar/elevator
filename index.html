@@ -99,6 +99,16 @@
     <script src="lib/dat.gui.min.js"></script>
     <!-- End of 3rd party libraries -->
 
+    <!-- bare imports need an importmap when not using a bundler -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.168.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.168.0/examples/jsm/"
+      }
+    }
+    </script>
+
     <!-- Main tangram library -->
     <script src="https://unpkg.com/tangram@0.15/dist/tangram.min.js"></script>
 
