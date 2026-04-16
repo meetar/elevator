@@ -1,4 +1,3 @@
-import { DragControls } from "three/addons/controls/DragControls.js";
 import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 import * as THREE from "three";
 
@@ -67,7 +66,7 @@ export function threestart() {
 
     // MATERIAL
 
-    dispTexture = new THREE.Texture(canvas);
+    dispTexture = new THREE.CanvasTexture(canvas);
 
     material = new THREE.MeshStandardMaterial( {
         map: dispTexture,
@@ -126,6 +125,7 @@ function adjustFOV() {
     var dist = 583;
     var aspect = window.innerHeight / window.innerWidth;
     var width = geometry.width;
+    var height = geometry.height;
     var fov;
     if (aspect < 1 ) fov = 2 * Math.atan( ( width / aspect ) / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
     else fov = 2 * Math.atan( height / ( 2 * dist ) ) * ( 180 / Math.PI ); // in degrees
@@ -136,9 +136,27 @@ function adjustFOV() {
 }
 
 export function update() {
+    if (!renderer || !dispTexture || !canvas) {
+        return;
+    }
+    var w = canvas.width;
+    var h = canvas.height;
+    if (w < 2 || h < 2) {
+        return;
+    }
+    // check if the canvas resized without recreating the gpu texture so it doesn't overflow the old dimensions
+    var img = dispTexture.image;
+    if (!img || img.width !== w || img.height !== h) {
+        dispTexture.dispose();
+        dispTexture = new THREE.CanvasTexture(canvas);
+        material.map = dispTexture;
+        material.displacementMap = dispTexture;
+    }
     dispTexture.needsUpdate = true;
     render();
-    controls.update(); // trackball interaction
+    if (controls) {
+        controls.update(); // trackball interaction
+    }
 }
 
 function render() {

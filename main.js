@@ -1,7 +1,6 @@
 /*jslint browser: true*/
-/*global Tangram, gui */
+/*global Tangram, gui, dat */
 import { renderer, container, camera, mesh, update, threestart, resizeGeometry, gridSquareWidth, gridSquareHeight } from "./3dcanvas";
-import * as dat from 'dat.gui';
 import * as THREE from 'three';
 
 console.log('Tangram:', Tangram);
@@ -118,7 +117,7 @@ const moveMesh = (e) => {
         scene: 'scene.yaml',
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="https://threejs.org" target="_blank">three.js</a> | <a href="https://github.com/meetar/elevator" target="_blank">Fork This</a>',
         postUpdate: function() {
-            if (gui.autoexpose && !stopped) {
+            if (typeof gui !== 'undefined' && gui.autoexpose && !stopped) {
                 // three stages:
                 // 1) start analysis
                 if (!analysing && !done) {
@@ -197,15 +196,24 @@ const moveMesh = (e) => {
 
     function drawTempImage() {
         var ctx = tempCanvas.getContext("2d", { willReadFrequently: true }); // Get canvas 2d context
-        ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-        // copy main scene canvas into the tempCanvas with the 2d context
-        ctx.drawImage(scene.canvas,0,0,scene.canvas.width,scene.canvas.height);
+        var dw = tempCanvas.width;
+        var dh = tempCanvas.height;
+        var sw = scene.canvas.width;
+        var sh = scene.canvas.height;
+        if (dw < 2 || dh < 2 || sw < 2 || sh < 2) {
+            return null;
+        }
+        ctx.clearRect(0, 0, dw, dh);
+        // scale Tangram canvas into tempCanvas so dest always matches buffer size
+        ctx.drawImage(scene.canvas, 0, 0, sw, sh, 0, 0, dw, dh);
         return ctx;
     }
 
     function analyse() {
         var ctx = drawTempImage();
+        if (!ctx) {
+            return false;
+        }
         // get all the pixels
         var pixels = ctx.getImageData(0,0, tempCanvas.width, tempCanvas.height, );
 
@@ -429,12 +437,16 @@ const moveMesh = (e) => {
     };
 
     function resizeTempCanvas() {
-        var tempCanvas = document.getElementById("tempCanvas");
+        var tempCanvasEl = document.getElementById("tempCanvas");
+        if (!tempCanvasEl) {
+            return;
+        }
         // can't use 'scene' here because three.js also uses scene :/
-        var layer = Object.keys(map._layers)[0];
-        if (typeof map._layers[layer].scene.canvas !== "undefined") {
-            tempCanvas.width = map._layers[layer].scene.canvas.width;
-            tempCanvas.height = map._layers[layer].scene.canvas.height;
+        var layerKey = Object.keys(map._layers)[0];
+        if (typeof map._layers[layerKey].scene.canvas !== "undefined") {
+            var c = map._layers[layerKey].scene.canvas;
+            tempCanvasEl.width = Math.max(2, c.width);
+            tempCanvasEl.height = Math.max(2, c.height);
         }
     }
     window.resizeTempCanvas = resizeTempCanvas;
@@ -469,9 +481,10 @@ const moveMesh = (e) => {
             tempCanvas.id = "tempCanvas";
             document.body.insertBefore(tempCanvas, document.body.childNodes[0]);
 
-            var layer = Object.keys(map._layers)[0];
-            tempCanvas.width = map._layers[layer].scene.canvas.width / tempFactor;
-            tempCanvas.height = map._layers[layer].scene.canvas.height / tempFactor;
+            var layerKeyInit = Object.keys(map._layers)[0];
+            var sc = map._layers[layerKeyInit].scene.canvas;
+            tempCanvas.width = Math.max(2, Math.floor(sc.width / tempFactor));
+            tempCanvas.height = Math.max(2, Math.floor(sc.height / tempFactor));
 
             threestart();
             var scaleVal = 25.0;
