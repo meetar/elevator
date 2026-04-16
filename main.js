@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*global Tangram, gui, dat */
-import { renderer, container, camera, mesh, update, threestart, resizeGeometry, gridSquareWidth, gridSquareHeight } from "./3dcanvas";
+import { renderer, container, camera, mesh, update, threestart, resizeGeometry, gridSquareWidth, gridSquareHeight } from "./3dcanvas.js";
 import * as THREE from 'three';
 
 console.log('Tangram:', Tangram);
